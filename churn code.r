@@ -1,88 +1,88 @@
 1. Churn_data <- read.csv(file.choose())
-2.  
+2. Â 
 3. str(Churn_data)
-4.  
+4. Â 
 5. Churn_data$Churn <- factor(Churn_data$Churn)
 6. str(Churn_data)
-7.  
+7. Â 
 8. #In sample prediction
 9. logit_model <- glm(Churn ~ ., data = Churn_data, family = "binomial")
-10.  
+10. Â 
 11. #Predict Churn column
 12. Churn_data$Churn_Predicted <- predict(logit_model, data = Churn_data, type = "response")
-13.  
+13. Â 
 14. #Change probabilities to class (0 or 1/Yes or No)
 15. Churn_data$Churn_Predicted <- ifelse(Churn_data$Churn_Predicted > 0.5,1,0)
-16.  
+16. Â 
 17. #Confusion Matrix
 18. table(Churn_data$Churn,Churn_data$Churn_Predicted)
 19. misClassError <- mean(Churn_data$Churn_Predicted != Churn_data$Churn)
-20.  
+20. Â 
 21. #Accurancy
 22. print(paste('Accuracy =',1-misClassError))
-23.  
+23. Â 
 24. ###################################################################################
 25. #Out of sample error
 26. Churn_data <- read.csv(file.choose())
-27.  
+27. Â 
 28. str(Churn_data)
-29.  
+29. Â 
 30. Churn_data$Churn <- factor(Churn_data$Churn)
 31. str(Churn_data)
-32.  
+32. Â 
 33. # Step 1:Split data in train and test data
 34. #install.packages("caTools")
 35. library(caTools)
 36. set.seed(390)
 37. split <- sample.split(Churn_data, SplitRatio = 0.7)
 38. split
-39.  
+39. Â 
 40. train <- subset(Churn_data, split== "TRUE")
 41. test <- subset(Churn_data, split== "FALSE")
 42. str(train)
 43. str(test)
-44.  
+44. Â 
 45. # Step 2:Train model with logistics regression using glm function
 46. logit_model <- glm(Churn ~ ., data = train, family = "binomial")
 47. logit_model
-48.  
+48. Â 
 49. summary(logit_model)
-50.  
-51.  
+50. Â 
+51. Â 
 52. logit_model <- glm(Churn ~ ContractRenewal + CustServCalls + RoamMins , data = train, family = binomial)
 53. summary(logit_model)
 54. # Null Deviance = (fit dependent variable only with intercept)
 55. # Residual Deviance = (fit dependent variable with all the independent variable)
 56. # AIC (lesser the better, used for comparing different models)
-57.  
-58.  
+57. Â 
+58. Â 
 59. # Step 3:Predict test data based on trained model -logit_model
 60. fitted.results <- predict(logit_model, test, type = "response")
-61.  
+61. Â 
 62. fitted.results # Predicted Result
 63. test$Churn   # Actual Result
-64.  
-65.  
+64. Â 
+65. Â 
 66. fitted.results.new <- fitted.results
 67. # Step 4: Change probabilities to class (0 or 1/Yes or No)
 68. # If prob > 0.5 then 1, else 0. Threshold can be set for better results
 69. #fitted.results <- ifelse(fitted.results > 0.5,1,0)
 70. fitted.results.new <- ifelse(fitted.results.new > 0.3,1,0)
 71. #fitted.results <- ifelse(fitted.results > 0.25,1,0)
-72.  
+72. Â 
 73. fitted.results.new # Predicted Result
 74. test$Churn    # Actual Result
-75.  
-76.  
+75. Â 
+76. Â 
 77. # Step 5: Evauate Model Accuracy using Confusion matrix
 78. table(test$Churn, fitted.results.new)
 79. misClassError <- mean(fitted.results.new != test$Churn  )
 80. print(paste('Accuracy =',1-misClassError))
-81.  
+81. Â 
 82. #Model evaluation using confusion matrix function
 83. library(caret)
 84. confusionMatrix(table(test$Churn, fitted.results.new))
-85.  
+85. Â 
 86. # ROC-AUC Curve
 87. #install.packages("ROCR")
 88. library(ROCR)
@@ -93,7 +93,7 @@
 93. plot(ROCRPerf, colorize = TRUE, print.cutoffs.at = seq(0.1,by=0.1))
 94. plot(ROCRPerf, colorize = TRUE, print.cutoffs.at = seq(0.1,by=0.1),main = "ROC CURVE")
 95. abline(a=0, b=1)
-96.  
+96. Â 
 97. auc <- performance(ROCRPred, measure = "auc")
 98. auc <- auc@y.values[[1]]
 99. auc
